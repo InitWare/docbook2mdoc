@@ -1,0 +1,92 @@
+Changes in version 1.1.0, released on May 2, 2019
+
+   --- NEW PARSER FEATURES ---
+ * Handle <funcparams> inside <paramdef> inside <funcprototype>.
+ * Ignore <jobtitle> and <orgdiv> elements.
+   --- NEW FORMATTER FEATURES --
+ * Write a comment "automatically generated" at the beginning.
+ * Provide an -s command line option to override the section in .Dt.
+ * Large numbers of improvements to horizontal and vertical whitespace.
+ * End of sentence detection: new sentence, new line.
+ * Drop trailing parentheses in <function> elements.
+ * Print commas between Copyright years.
+
+Changes in version 1.0.2, released on April 29, 2019
+
+   --- NEW PARSER FEATURES ---
+ * Handle <abstract>: better formatting of many non-<refentry> documents.
+ * Handle <reference> like <section>.
+ * Explicitly ignore <keycombo>.
+   --- STRUCTURAL IMPROVEMENTS ---
+ * Start a new module reorg.c, to edit and move around nodes.
+ * Provide a new function pnode_alloc_text() to generate a text node.
+ * Introduce an xmalloc.c module to automatically exit when out of memory.
+
+Changes in version 1.0.1, released on April 24, 2019
+
+   --- NEW PARSER FEATURES ---
+ * Handle file inclusion via "<!ENTITY %".
+ * Translate decimal character entities to Unicode escapes.
+ * Handle <tag> like <sgmltag> and <markup>.
+   --- RELIABILITY BUGFIX ---
+ * Do not crash when an ignored element contains an attribute.
+   --- FORMATTING IMPROVEMENTS ---
+ * Correctly translate input to output line breaks in no-fill elements.
+ * Improve spacing of text nodes inside macro arguments.
+ * Better handle <void> as a child of <funcprototype>.
+ * Better handle <info> as a child of <refentry>.
+ * Correct delimiter spacing between <term> elements.
+ * Insert a paragraph break after displays and after non-compact lists.
+   --- THANKS TO ---
+ * Stephen Gregoratto for a small patch and two bug reports.
+ * Jan Stary for a bug report.
+
+Changes in version 1.0.0, released on April 17, 2019
+
+ * Stop using expat because it cannot handle invalid input gracefully.
+ * Drop input validation functionality, make it a best-effort formatter.
+ * Implement file inclusion via <xi:include> and via <!ENTITY>.
+ * Implement -T lint and -T tree dump output modes.
+ * Handle large numbers of additional elements.
+ * Dynamic assignment of header levels.
+ * Overhaul whitespace handling on the input and output sides.
+ * Overhaul paragraph handling.
+ * Initial MathML support.
+ * Switch to mandoc(1)-style EXIT STATUS and DIAGNOSTICS.
+ * Large numbers of formatting and structural improvements.
+   --- THANKS TO ---
+ * Stephen Gregoratto for four patches and several bug reports.
+ * Anthony Bentley and Svyatoslav Mishyn for minor patches.
+
+Changes in version 0.0.9, released on April 30, 2014
+
+ * Add the -W command line option.
+ * Handle trailing delimiters after macros.
+ * Handle <fieldsynopsis>, <modifier>, <type>.
+
+Changes in version 0.0.8, released on April 30, 2014
+
+ * Handle <contstant>, <copyright>, <holder>, <informaltable>,
+   <trademark>, <year>.
+ * Ignore <xi:include>.
+
+Changes in version 0.0.7, released on April 2, 2014
+
+ * Handle <application>, <caution>, <note>, <quote>, <sgmltag>,
+   <tip>, <warning>.
+
+Changes in version 0.0.6, released on April 2, 2014
+
+ * Initial support for tables.
+ * Handle <envar>, <filename>, <group>, <itemizedlist>, <link>,
+   <literal>, <orderedlist>, <prompt>, <sbr>, <screen>, <userinput>,
+   <variablelist>, <varname>.
+
+Changes in version 0.0.4, released on March 29, 2014
+
+ * Support for XML element attributes.
+ * Handle <structname>.
+ * Commas between names in the NAME section.
+
+Start of development in CVS and first public release:
+Version 0.0.2, released on March 28, 2014.

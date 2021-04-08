@@ -1,0 +1,205 @@
+.\" $Id: docbook2mdoc.1,v 1.17 2019/05/02 12:40:42 schwarze Exp $
+.\"
+.\" Copyright (c) 2014 Kristaps Dzonsons <kristaps@bsd.lv>
+.\" Copyright (c) 2019 Ingo Schwarze <schwarze@openbsd.org>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd $Mdocdate: May 2 2019 $
+.Dt DOCBOOK2MDOC 1
+.Os
+.Sh NAME
+.Nm docbook2mdoc
+.Nd convert DocBook to mdoc
+.Sh SYNOPSIS
+.Nm docbook2mdoc
+.Op Fl W
+.Op Fl s Ar section
+.Op Fl T Cm mdoc | tree | lint
+.Op Ar file
+.Sh DESCRIPTION
+The
+.Nm
+utility reads DocBook input from a
+.Ar file
+and translates it to
+.Xr mdoc 7
+and
+.Xr eqn 7 .
+If
+.Ar file
+is omitted, standard input is used.
+.Pp
+The options are as follows:
+.Bl -tag -width 2n
+.It Fl s
+Specify the manual page
+.Ar section
+to be used as the second argument of the
+.Ic \&Dt
+macro.
+Defaults to the content of the first
+.Eo < Ic manvolnum Ec >
+element in the first
+.Eo < Ic refmeta Ec >
+block, if any, or to
+.Qq 1
+otherwise.
+.It Fl T
+Select the output mode.
+The following arguments are supported:
+.Bl -tag -width 4n
+.It Cm mdoc
+Translate the input to
+.Xr mdoc 7 .
+This is the default.
+.It Cm tree
+Dump a human-readable representation of the parse tree.
+Each output line shows one tree node.
+Child nodes are indented with respect to their parent node.
+The columns are:
+.Bl -enum -width 2n
+.It
+An asterisk if the node starts a new text line,
+or a hyphen if the node follows the previous node
+without intervening whitespace.
+.It
+The node type.
+.It
+For text nodes, the text contents.
+For other nodes, the attributes, if any.
+.El
+.It Cm lint
+Do not produce any output, only error messages.
+Can be combined with
+.Fl W .
+.El
+.It Fl W
+Report warnings on standard error output, and if any occur, raise the
+.Sx EXIT STATUS
+to at least 2.
+.El
+.Pp
+A subset of DocBook 5.1 elements are recognized,
+as well as some elements from earlier versions.
+The parser is optimized for robustness even on invalid input,
+always producing some output on a best-effort basis.
+Input is not required to be well-formed, nor to adhere to DocBook
+syntactic or semantic requirements.
+.Pp
+Unknown elements are ignored in the sense that they do not affect
+formatting and only their content is rendered.
+Unknown attributes are silently discarded.
+.Pp
+In addition to DocBook elements, the following constructs are handled:
+.Bl -tag -width Ds
+.It Eo <!
+.Ic DOCTYPE No ...
+.Eo "[ <!" Ic ENTITY Ar name Qo Ar definition Qc Ec "> ]"
+.Ec >
+Internal subset declaration to define an XML entity.
+.It Eo <!
+.Ic DOCTYPE No ...
+.Eo "[ <!" Ic ENTITY Ar name Cm SYSTEM Qo Ar file Qc Ec "> ]"
+.Ec >
+Internal subset declaration to define an XML entity using an external
+.Ar file .
+.It Eo <!
+.Ic DOCTYPE No ...
+.Bo
+.Eo " <!" Ic ENTITY No % Ar name Cm SYSTEM Qo Ar file Qc Ec >
+.Pf % Ar name No \&
+.Bc
+.Ec >
+Internal subset declaration to include an external
+.Ar file
+that is supposed to contain entity declarations.
+.It Eo < Ic mml : Ns ... Ec >
+Elements from the MathML namespace.
+These are translated to
+.Xr eqn 7 .
+.It Eo <
+.Ic xi : Ns Ic include No ...
+.Cm href Ns = Ns Qq Ar file
+.Ec >
+Include an external DocBook file into the current document.
+.El
+.Sh EXIT STATUS
+The
+.Nm
+utility exits with one of the following values:
+.Bl -tag -width 2n
+.It 0
+No error occurred, and if
+.Fl W
+was specified, no warning occurred either.
+.It 2
+At least one warning occurred, but no error, and
+.Fl W
+was specified.
+.It 3
+At least one parsing error occurred.
+.It 5
+Invalid command line arguments were specified.
+No input files have been read.
+.It 6
+Memory was exhausted.
+Parsing was aborted immediately.
+.El
+.Sh EXAMPLES
+To pipe a DocBook document
+.Pa foo.xml
+through
+.Xr mandoc 1
+and a pager:
+.Pp
+.Dl $ docbook2mdoc foo.xml | mandoc -l
+.Sh DIAGNOSTICS
+Messages displayed by
+.Nm
+follow this format:
+.Pp
+.D1 Nm : Ar file : Ns Ar line : Ns Ar column : level : message
+.Pp
+The first three fields identify the
+.Ar file
+name,
+.Ar line
+number, and
+.Ar column
+number of the input file where the message was triggered.
+The line and column numbers start at 1.
+.Pp
+Message levels have the following meanings:
+.Bl -tag -width warning
+.It Sy fatal
+An operating system error occurred, typically memory exhaustion,
+and parsing was aborted immediately.
+.It Sy error
+Indicates a risk of information loss or severe misformatting,
+for example caused by unknown elements or missing include files.
+.It Sy warning
+Indicates a risk that the information shown or its formatting
+may mismatch the author's intent in minor ways.
+For example, mismatched or missing end tags are classified as warnings.
+.El
+.Sh SEE ALSO
+.Xr mandoc 1 ,
+.Xr eqn 7 ,
+.Xr mdoc 7
+.Sh AUTHORS
+.Nm
+was written by
+.An Kristaps Dzonsons Aq Mt kristaps@bsd.lv
+and
+.An Ingo Schwarze Aq Mt schwarze@openbsd.org .

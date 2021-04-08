@@ -160,6 +160,10 @@ reorg_refentry(struct pnode *n)
 	}
 
 	/*
+	 * Disabled - it yields a mess in the AUTHORS section.
+	 */
+#if 0
+	/*
 	 * If no AUTHORS section was found, create one from scratch,
 	 * and insert that at the place selected earlier.
 	 */
@@ -189,6 +193,7 @@ reorg_refentry(struct pnode *n)
 		TAILQ_INSERT_TAIL(&match->childq, info, child);
 	if (meta != NULL)
 		TAILQ_INSERT_TAIL(&match->childq, meta, child);
+#endif
 }
 
 static void

@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "bsdstdlib.h"
 #include "xmalloc.h"
 
 /*
